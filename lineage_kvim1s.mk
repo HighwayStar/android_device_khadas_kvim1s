@@ -9,6 +9,8 @@ TARGET_HAS_TEE := false
 # Not set in time to check, so set before everything else
 PRODUCT_IS_ATV := true
 
+TARGET_SUPPORTS_OMX_SERVICE := false
+
 # Inherit some common AOSP stuff
 $(call inherit-product, device/google/atv/products/atv_base.mk)
 
