@@ -33,17 +33,20 @@ NEEDED_IMAGES := \
     vbmeta.img \
     vbmeta_system.img \
     vendor_boot.img \
+    init_boot.img \
     dtbo.img \
-    dtb.PARTITION
+    dtb.img
 
 $(INSTALLED_AML_UPGRADE_PACKAGE_TARGET): $(addprefix $(PRODUCT_OUT)/,$(NEEDED_IMAGES)) $(AML_IMAGE_TOOL)
 	$(hide) mkdir -p $(PRODUCT_UPGRADE_OUT)
 #ifneq ("$(wildcard $(FACTORY_PATH)/u-boot.bin.usb.signed)","")
-	$(hide) $(call aml-symlink-file, $(FACTORY_PATH)/DDR.USB)
-	$(hide) $(call aml-symlink-file, $(FACTORY_PATH)/aml_sdc_burn.UBOOT)
+	$(hide) $(call aml-symlink-file, $(FACTORY_PATH)/u-boot.bin.usb.signed)
+	$(hide) $(call aml-symlink-file, $(FACTORY_PATH)/u-boot.bin.sd.bin.signed)
 	$(hide) $(call aml-symlink-file, $(FACTORY_PATH)/bootloader.img)
 	$(hide) $(call aml-symlink-file, $(FACTORY_PATH)/odm_ext_a.PARTITION)
-	$(hide) $(call aml-symlink-file, $(PRODUCT_OUT)/oem_a.PARTITION)
+	$(hide) $(call aml-symlink-file, $(FACTORY_PATH)/oem_a.PARTITION)
+	$(hide) $(call aml-symlink-file, $(FACTORY_PATH)/gpt.bin)
+
 #else ifneq ("$(wildcard vendor/khadas/kvim1s/radio/bootloader.img)","")
 #	$(hide) $(call aml-symlink-file, vendor/khadas/kvim1s/radio/bootloader.img, u-boot.bin)
 #else
@@ -56,12 +59,13 @@ $(INSTALLED_AML_UPGRADE_PACKAGE_TARGET): $(addprefix $(PRODUCT_OUT)/,$(NEEDED_IM
 	$(hide) $(call aml-symlink-file, $(FACTORY_PATH)/platform.conf)
 	$(hide) $(call aml-symlink-file, $(PRODUCT_OUT)/boot.img)
 	$(hide) $(call aml-symlink-file, $(PRODUCT_OUT)/recovery.img)
-	$(hide) $(call aml-symlink-file, $(PRODUCT_OUT)/dtb.PARTITION)
+	$(hide) $(call aml-symlink-file, $(PRODUCT_OUT)/dtb.img)
 	$(hide) $(call aml-symlink-file, $(PRODUCT_OUT)/dtbo.img)
 	$(hide) $(call aml-symlink-file, $(PRODUCT_OUT)/super.img)
 	$(hide) $(call aml-symlink-file, $(PRODUCT_OUT)/vbmeta.img)
 	$(hide) $(call aml-symlink-file, $(PRODUCT_OUT)/vbmeta_system.img)
 	$(hide) $(call aml-symlink-file, $(PRODUCT_OUT)/vendor_boot.img)
+	$(hide) $(call aml-symlink-file, $(PRODUCT_OUT)/init_boot.img)
 	$(hide) $(AML_IMAGE_TOOL) -r $(PACKAGE_CONFIG_FILE) $(PRODUCT_UPGRADE_OUT)/ $@
 	$(hide) rm -rf $(PRODUCT_UPGRADE_OUT)
 	$(hide) echo " $@ created"
