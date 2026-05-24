@@ -7,6 +7,11 @@ vendor/lib/firmware/aucpu_fw.bin
 ## Keylayout
 vendor/usr/keylayout/Vendor_0001_Product_0001.kl
 
+## Codec2
+vendor/lib/firmware/regulatory.db
+vendor/lib/firmware/regulatory.db.p7s
+vendor/lib/firmware/video/video_ucode.bin
+
 ## TZ
 vendor/lib/teetz/526fc4fc-7ee6-4a12-96e3-83da9565bce8.ta
 vendor/lib/teetz/e92a43ab-b4c8-4450-aa12-b1516259613b.ta

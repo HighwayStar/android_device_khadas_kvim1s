@@ -17,6 +17,7 @@ set -e
 export DEVICE=kvim1s
 export DEVICE_COMMON=ne-common
 export VENDOR=khadas
+export VENDOR_BRAND=khadas
 export VENDOR_COMMON=amlogic
 
 "./../../${VENDOR_COMMON}/${DEVICE_COMMON}/extract-files.sh" "$@"
