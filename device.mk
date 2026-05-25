@@ -11,6 +11,9 @@ PRODUCT_PACKAGES += \
     Kvim1sBluetoothOverlay \
     libbt-vendor
 
+include kernel/amlogic/kernel-modules/dhd-driver/firmware/bluetooth/bluetooth.mk
+
+
 ## Factory
 PRODUCT_HOST_PACKAGES += \
     aml_image_packer
