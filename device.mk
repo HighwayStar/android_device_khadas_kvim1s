@@ -24,7 +24,8 @@ PRODUCT_PACKAGES += \
     dhd
 
 ## Wi-Fi Firmware
-include hardware/amlogic/kernel-modules/dhd-driver/firmware/firmware.mk
+
+include kernel/amlogic/kernel-modules/dhd-driver/firmware/wifi/wifi.mk
 
 ## Inherit from the common tree product makefile
 $(call inherit-product, device/amlogic/ne-common/ne.mk)
