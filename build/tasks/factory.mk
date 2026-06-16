@@ -27,23 +27,44 @@ PRODUCT_INSTALL_OUT := $(PRODUCT_OUT)/aml_install
 PRODUCT_UPGRADE_OUT := $(PRODUCT_OUT)/aml_upgrade
 INSTALL_PACKAGE_CONFIG_FILE := $(PRODUCT_INSTALL_OUT)/image_install.cfg
 UPGRADE_PACKAGE_CONFIG_FILE := $(PRODUCT_UPGRADE_OUT)/image_upgrade.cfg
-AML_IMAGE_TOOL := $(HOST_OUT_EXECUTABLES)/aml_image_packer$(HOST_EXECUTABLE_SUFFIX)
+AML_IMAGE_TOOL := $(FACTORY_PATH)/aml_image_v2_packer
 
+INSTALLED_AML_INSTALL_PACKAGE_TARGET := $(PRODUCT_OUT)/aml_install_package.img
 INSTALLED_AML_UPGRADE_PACKAGE_TARGET := $(PRODUCT_OUT)/aml_upgrade_package.img
 
-define aml-symlink-file
-	$(hide) ln -sf $(shell readlink -f $(1)) $(PRODUCT_UPGRADE_OUT)/$(strip $(if $(2), $(2), $(notdir $(1))))
+define aml-copy-install-file
+	$(hide) $(ACP) $(1) $(PRODUCT_INSTALL_OUT)/$(strip $(if $(2), $(2), $(notdir $(1))))
 endef
 
-NEEDED_IMAGES := \
+define aml-copy-upgrade-file
+	$(hide) $(ACP) $(1) $(PRODUCT_UPGRADE_OUT)/$(strip $(if $(2), $(2), $(notdir $(1))))
+endef
+
+
+UPGRADE_IMAGES := \
     logo.img \
     boot.img \
     super.img \
+    super_empty.img \
     vbmeta.img \
     vbmeta_system.img \
     vendor_boot.img \
     dtbo.img \
     dtb.PARTITION
+
+INSTALL_IMAGES := \
+    boot.img \
+    dtbo.img \
+    vbmeta.img \
+    dtb.PARTITION \
+    vbmeta_system.img \
+    vendor_boot.img \
+    super.img \
+    super_empty.img \
+    logo.img \
+    misc.img
+
+
 
 $(INSTALLED_AML_INSTALL_PACKAGE_TARGET): $(addprefix $(PRODUCT_OUT)/,$(INSTALL_IMAGES)) $(ACP) $(AML_IMAGE_TOOL)
 	$(hide) mkdir -p $(PRODUCT_INSTALL_OUT)
@@ -52,16 +73,20 @@ ifeq ($(WITH_CONSOLE_BL),true)
 else
 	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/bootfiles/bootloader.img, u-boot.bin)
 endif
+	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/bootfiles/aml_sdc_burn.UBOOT)
+	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/bootfiles/DDR.USB)
 	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/logo.img)
 	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/aml_sdc_burn.ini)
+	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/usb_flow.aml)
 	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/image_install.cfg, image.cfg)
 	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/platform.conf)
 	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/boot.img)
-	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/recovery.img)
-	$(hide) $(call aml-copy-install-file, $(INSTALLED_2NDBOOTLOADER_TARGET), dtb.img)
+	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/dtb.img)
 	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/dtbo.img)
 	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/super_empty.img, super.img)
 	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/vbmeta.img)
+	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/vbmeta_system.img)
+	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/vendor_boot.img)
 	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/misc.img)
 	$(hide) $(AML_IMAGE_TOOL) -r  $(PRODUCT_INSTALL_OUT)/image.cfg $(PRODUCT_INSTALL_OUT)/ $@
 	$(hide) rm -rf $(PRODUCT_INSTALL_OUT)
@@ -83,20 +108,26 @@ INSTALLED_RADIOIMAGE_TARGET += $(INSTALLED_AML_INSTALL_PACKAGE_TARGET)
 $(INSTALLED_AML_UPGRADE_PACKAGE_TARGET): $(addprefix $(PRODUCT_OUT)/,$(UPGRADE_IMAGES)) $(ACP) $(AML_IMAGE_TOOL)
 	$(hide) mkdir -p $(PRODUCT_UPGRADE_OUT)
 ifeq ($(WITH_CONSOLE_BL),true)
-	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/bootfiles/bootloader-console.img, u-boot.bin)
+	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/bootfiles/bootloader-console.img, bootloader.img)
 else
-	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/bootfiles/bootloader.img, u-boot.bin)
+	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/bootfiles/bootloader.img, bootloader.img)
 endif
 	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/logo.img)
+	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/bootfiles/aml_sdc_burn.UBOOT)
+	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/bootfiles/DDR.USB)
 	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/aml_sdc_burn.ini)
+	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/usb_flow.aml)
 	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/image_upgrade.cfg, image.cfg)
 	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/platform.conf)
+	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/odm_ext_a.PARTITION)
+	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/oem_a.PARTITION)
 	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/boot.img)
-	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/recovery.img)
-	$(hide) $(call aml-copy-upgrade-file, $(INSTALLED_2NDBOOTLOADER_TARGET), dtb.img)
+	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/dtb.PARTITION)
 	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/dtbo.img)
 	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/super.img)
 	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/vbmeta.img)
+	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/vbmeta_system.img)
+	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/vendor_boot.img)
 	$(hide) $(AML_IMAGE_TOOL) -r  $(PRODUCT_UPGRADE_OUT)/image.cfg $(PRODUCT_UPGRADE_OUT)/ $@
 	$(hide) rm -rf $(PRODUCT_UPGRADE_OUT)
 	$(hide) echo " $@ created"
