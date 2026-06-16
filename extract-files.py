@@ -10,8 +10,8 @@ from extract_utils.main import (
 )
 
 module = ExtractUtilsModule(
-    'oppen',
-    'sdmc',
+    'kvim1s',
+    'khadas',
 )
 
 if __name__ == '__main__':
