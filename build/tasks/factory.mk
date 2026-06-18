@@ -42,39 +42,41 @@ endef
 
 
 UPGRADE_IMAGES := \
-    logo.img \
     boot.img \
-    super.img \
-    super_empty.img \
-    vbmeta.img \
-    vbmeta_system.img \
-    vendor_boot.img \
+    dtb.img \
     dtbo.img \
-    dtb.PARTITION
+    init_boot.img \
+    logo.img \
+    super_empty.img \
+    super.img \
+    vbmeta_system.img \
+    vbmeta.img \
+    vendor_boot.img
 
 INSTALL_IMAGES := \
     boot.img \
+    dtb.img \
     dtbo.img \
-    vbmeta.img \
-    dtb.PARTITION \
-    vbmeta_system.img \
-    vendor_boot.img \
-    super.img \
-    super_empty.img \
     logo.img \
-    misc.img
-
+    init_boot.img \
+    misc.img \
+    super_empty.img \
+    super.img \
+    vbmeta_system.img \
+    vbmeta.img \
+    vendor_boot.img
 
 
 $(INSTALLED_AML_INSTALL_PACKAGE_TARGET): $(addprefix $(PRODUCT_OUT)/,$(INSTALL_IMAGES)) $(ACP) $(AML_IMAGE_TOOL)
 	$(hide) mkdir -p $(PRODUCT_INSTALL_OUT)
 ifeq ($(WITH_CONSOLE_BL),true)
-	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/bootfiles/bootloader-console.img, u-boot.bin)
+	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/bootfiles/bootloader-console.img, bootloader.img)
 else
-	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/bootfiles/bootloader.img, u-boot.bin)
+	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/bootfiles/bootloader.img, bootloader.img)
 endif
-	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/bootfiles/aml_sdc_burn.UBOOT)
-	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/bootfiles/DDR.USB)
+	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/bootfiles/u-boot.bin.sd.bin.signed)
+	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/bootfiles/u-boot.bin.usb.signed)
+	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/gpt.bin)
 	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/logo.img)
 	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/aml_sdc_burn.ini)
 	$(hide) $(call aml-copy-install-file, $(FACTORY_PATH)/usb_flow.aml)
@@ -83,6 +85,7 @@ endif
 	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/boot.img)
 	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/dtb.img)
 	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/dtbo.img)
+	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/init_boot.img)
 	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/super_empty.img, super.img)
 	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/vbmeta.img)
 	$(hide) $(call aml-copy-install-file, $(PRODUCT_OUT)/vbmeta_system.img)
@@ -113,16 +116,19 @@ else
 	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/bootfiles/bootloader.img, bootloader.img)
 endif
 	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/logo.img)
-	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/bootfiles/aml_sdc_burn.UBOOT)
-	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/bootfiles/DDR.USB)
-	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/aml_sdc_burn.ini)
+	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/bootfiles/u-boot.bin.sd.bin.signed)
+	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/bootfiles/u-boot.bin.usb.signed)
 	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/usb_flow.aml)
+	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/aml_sdc_burn.ini)
+	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/gpt.bin)
 	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/image_upgrade.cfg, image.cfg)
 	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/platform.conf)
 	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/odm_ext_a.PARTITION)
 	$(hide) $(call aml-copy-upgrade-file, $(FACTORY_PATH)/oem_a.PARTITION)
+	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/logo.img)
 	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/boot.img)
-	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/dtb.PARTITION)
+	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/dtb.img)
+	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/init_boot.img)
 	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/dtbo.img)
 	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/super.img)
 	$(hide) $(call aml-copy-upgrade-file, $(PRODUCT_OUT)/vbmeta.img)
