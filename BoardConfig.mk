@@ -5,6 +5,8 @@
 #
 
 DEVICE_PATH := device/khadas/kvim1s
+KERNEL_PATH := $(DEVICE_PATH)-kernel/5.15
+
 
 ## Bluetooth
 BOARD_HAVE_BLUETOOTH := true
